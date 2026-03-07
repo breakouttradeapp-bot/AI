@@ -23,3 +23,9 @@ Thumbs.db
 
 # Kotlin
 out/u
+# JVM heap dumps
+*.hprof
+
+# Gradle / build
+.gradle/
+build/
