@@ -1,0 +1,50 @@
+[
+    {
+        "merged": "com.aikundli.app-merged_res-76:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.aikundli.app-main-78:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.aikundli.app-merged_res-76:/xml_network_security_config.xml.flat",
+        "source": "com.aikundli.app-main-78:/xml/network_security_config.xml"
+    },
+    {
+        "merged": "com.aikundli.app-merged_res-76:/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "com.aikundli.app-main-78:/mipmap-mdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.aikundli.app-merged_res-76:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.aikundli.app-main-78:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.aikundli.app-merged_res-76:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.aikundli.app-main-78:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.aikundli.app-merged_res-76:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "com.aikundli.app-main-78:/mipmap-xxxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.aikundli.app-merged_res-76:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "com.aikundli.app-main-78:/mipmap-hdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.aikundli.app-merged_res-76:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.aikundli.app-main-78:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.aikundli.app-merged_res-76:/xml_file_paths.xml.flat",
+        "source": "com.aikundli.app-main-78:/xml/file_paths.xml"
+    },
+    {
+        "merged": "com.aikundli.app-merged_res-76:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.aikundli.app-main-78:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.aikundli.app-merged_res-76:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "com.aikundli.app-main-78:/mipmap-xxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.aikundli.app-merged_res-76:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "com.aikundli.app-main-78:/mipmap-xhdpi/ic_launcher_round.png"
+    }
+]
