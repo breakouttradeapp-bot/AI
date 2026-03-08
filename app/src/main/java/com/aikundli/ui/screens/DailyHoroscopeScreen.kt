@@ -34,9 +34,12 @@ fun DailyHoroscopeScreen(
     navController: NavController,
     viewModel: KundliViewModel = viewModel()
 ) {
+
     val state by viewModel.horoscopeState.collectAsState()
 
-    LaunchedEffect(Unit) { viewModel.loadDailyHoroscopes() }
+    LaunchedEffect(Unit) {
+        viewModel.loadDailyHoroscopes()
+    }
 
     var selected by remember { mutableStateOf<ZodiacHoroscope?>(null) }
 
@@ -45,50 +48,89 @@ fun DailyHoroscopeScreen(
             .fillMaxSize()
             .background(Brush.verticalGradient(listOf(DarkSpace, DeepIndigo)))
     ) {
+
         Row(
             Modifier.fillMaxWidth().padding(16.dp).padding(top = 36.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             IconButton(onClick = { navController.popBackStack() }) {
                 Icon(Icons.Default.ArrowBack, null, tint = GoldenStar)
             }
-            Text("Daily Horoscope", style = MaterialTheme.typography.headlineMedium,
-                color = GoldenStar, fontWeight = FontWeight.Bold)
+
+            Text(
+                "Daily Horoscope",
+                style = MaterialTheme.typography.headlineMedium,
+                color = GoldenStar,
+                fontWeight = FontWeight.Bold
+            )
         }
 
         if (state.isLoading) {
+
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = MysticViolet)
             }
+
             return@Column
         }
 
         AnimatedVisibility(visible = selected != null) {
+
             selected?.let { sign ->
+
                 GlassCard(Modifier.padding(16.dp)) {
+
                     Column(Modifier.padding(16.dp)) {
+
                         Row(verticalAlignment = Alignment.CenterVertically) {
+
                             Text(sign.symbol, fontSize = 36.sp)
+
                             Spacer(Modifier.width(12.dp))
+
                             Column {
-                                Text(sign.sign, style = MaterialTheme.typography.titleLarge,
-                                    color = GoldenStar, fontWeight = FontWeight.Bold)
-                                Text("Today's Reading", color = StarlightWhite.copy(0.6f),
-                                    style = MaterialTheme.typography.bodySmall)
+
+                                Text(
+                                    sign.sign,
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = GoldenStar,
+                                    fontWeight = FontWeight.Bold
+                                )
+
+                                Text(
+                                    "Today's Reading",
+                                    color = StarlightWhite.copy(0.6f),
+                                    style = MaterialTheme.typography.bodySmall
+                                )
                             }
                         }
+
                         Spacer(Modifier.height(12.dp))
-                        Text(sign.text, color = StarlightWhite.copy(0.85f),
-                            style = MaterialTheme.typography.bodyMedium)
+
+                        Text(
+                            sign.text,
+                            color = StarlightWhite.copy(0.85f),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+
                         Spacer(Modifier.height(8.dp))
+
                         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                            Text("🔢 Lucky: ${sign.luckyNumber}",
+
+                            Text(
+                                "🔢 Lucky: ${sign.luckyNumber}",
                                 color = GoldenStar.copy(0.9f),
-                                style = MaterialTheme.typography.bodySmall)
-                            Text("🎨 Color: ${sign.luckyColor}",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+
+                            Text(
+                                "🎨 Color: ${sign.luckyColor}",
                                 color = GoldenStar.copy(0.9f),
-                                style = MaterialTheme.typography.bodySmall)
+                                style = MaterialTheme.typography.bodySmall
+                            )
                         }
+
                         TextButton(onClick = { selected = null }) {
                             Text("Close", color = MysticViolet)
                         }
@@ -97,7 +139,12 @@ fun DailyHoroscopeScreen(
             }
         }
 
-        val horoscopes = if (state.horoscopes.isEmpty()) defaultZodiacList() else state.horoscopes
+        // FIX: Null safe horoscope list
+        val horoscopes = state.horoscopes ?: emptyList()
+
+        val finalList =
+            if (horoscopes.isEmpty()) defaultZodiacList()
+            else horoscopes
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
@@ -105,8 +152,14 @@ fun DailyHoroscopeScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            itemsIndexed(horoscopes) { index, sign ->
-                ZodiacCard(sign = sign, delay = index * 50, onClick = { selected = sign })
+
+            itemsIndexed(finalList) { index, sign ->
+
+                ZodiacCard(
+                    sign = sign,
+                    delay = index * 50,
+                    onClick = { selected = sign }
+                )
             }
         }
     }
@@ -114,7 +167,9 @@ fun DailyHoroscopeScreen(
 
 @Composable
 fun ZodiacCard(sign: ZodiacHoroscope, delay: Int, onClick: () -> Unit) {
+
     var visible by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         kotlinx.coroutines.delay(delay.toLong())
         visible = true
@@ -139,23 +194,37 @@ fun ZodiacCard(sign: ZodiacHoroscope, delay: Int, onClick: () -> Unit) {
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         border = BorderStroke(1.dp, GlassBorder)
     ) {
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(GlassWhite),
             contentAlignment = Alignment.Center
         ) {
+
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.padding(8.dp)
             ) {
+
                 Text(sign.symbol, fontSize = 28.sp)
+
                 Spacer(Modifier.height(6.dp))
-                Text(sign.sign, color = StarlightWhite, fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.labelSmall, textAlign = TextAlign.Center)
-                Text("🔢 ${sign.luckyNumber}", color = GoldenStar.copy(0.8f),
-                    style = MaterialTheme.typography.labelSmall)
+
+                Text(
+                    sign.sign,
+                    color = StarlightWhite,
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.labelSmall,
+                    textAlign = TextAlign.Center
+                )
+
+                Text(
+                    "🔢 ${sign.luckyNumber}",
+                    color = GoldenStar.copy(0.8f),
+                    style = MaterialTheme.typography.labelSmall
+                )
             }
         }
     }

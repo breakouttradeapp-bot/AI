@@ -3,6 +3,7 @@ package com.aikundli.ui.screens
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.widget.DatePicker
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -47,7 +48,6 @@ fun GenerateKundliScreen(
 
     val calendar = Calendar.getInstance()
 
-    // Date picker
     val datePicker = DatePickerDialog(
         context,
         { _: DatePicker, y: Int, m: Int, d: Int ->
@@ -58,13 +58,12 @@ fun GenerateKundliScreen(
         calendar.get(Calendar.DAY_OF_MONTH)
     )
 
-    // Time picker
-    val timePicker = TimePickerDialog(context,
+    val timePicker = TimePickerDialog(
+        context,
         { _, h, min -> tob = "%02d:%02d".format(h, min) },
         12, 0, true
     )
 
-    // Navigate to result when data arrives
     LaunchedEffect(state.kundliResult) {
         if (state.kundliResult != null) {
             navController.navigate(Screen.KundliResult.route)
@@ -77,7 +76,7 @@ fun GenerateKundliScreen(
             .background(Brush.verticalGradient(listOf(DarkSpace, DeepIndigo)))
             .verticalScroll(rememberScrollState())
     ) {
-        // Top bar
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -97,39 +96,45 @@ fun GenerateKundliScreen(
         }
 
         GlassCard(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-            Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text("🔮 Birth Details", style = MaterialTheme.typography.titleLarge, color = GoldenStar)
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+
+                Text("🔮 Birth Details",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = GoldenStar)
 
                 KundliTextField(value = name, onValueChange = { name = it },
                     label = "Full Name", icon = "👤")
 
-                // Gender selector
                 Column {
-                    Text("Gender", color = StarlightWhite.copy(alpha = 0.7f),
+                    Text("Gender",
+                        color = StarlightWhite.copy(alpha = 0.7f),
                         style = MaterialTheme.typography.labelSmall)
+
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         listOf("Male", "Female", "Other").forEach { g ->
                             FilterChip(
                                 selected = gender == g,
-                                onClick  = { gender = g },
-                                label    = { Text(g) },
-                                colors   = FilterChipDefaults.filterChipColors(
+                                onClick = { gender = g },
+                                label = { Text(g) },
+                                colors = FilterChipDefaults.filterChipColors(
                                     selectedContainerColor = MysticViolet,
-                                    selectedLabelColor     = Color.White
+                                    selectedLabelColor = Color.White
                                 )
                             )
                         }
                     }
                 }
 
-                // Date of birth
                 OutlinedButton(
                     onClick = { datePicker.show() },
                     modifier = Modifier.fillMaxWidth(),
-                    shape  = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(12.dp),
                     border = BorderStroke(1.dp, GlassBorder)
                 ) {
-                    Icon(Icons.Default.CalendarMonth, contentDescription = null, tint = GoldenStar)
+                    Icon(Icons.Default.CalendarMonth, null, tint = GoldenStar)
                     Spacer(Modifier.width(8.dp))
                     Text(
                         if (dob.isEmpty()) "Date of Birth" else dob,
@@ -137,14 +142,13 @@ fun GenerateKundliScreen(
                     )
                 }
 
-                // Time of birth
                 OutlinedButton(
                     onClick = { timePicker.show() },
                     modifier = Modifier.fillMaxWidth(),
-                    shape  = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(12.dp),
                     border = BorderStroke(1.dp, GlassBorder)
                 ) {
-                    Icon(Icons.Default.AccessTime, contentDescription = null, tint = GoldenStar)
+                    Icon(Icons.Default.AccessTime, null, tint = GoldenStar)
                     Spacer(Modifier.width(8.dp))
                     Text(
                         if (tob.isEmpty()) "Time of Birth" else tob,
@@ -156,59 +160,69 @@ fun GenerateKundliScreen(
                     label = "Place of Birth", icon = "📍")
 
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+
                     KundliTextField(
-                        value         = latitude,
+                        value = latitude,
                         onValueChange = { latitude = it },
-                        label         = "Latitude",
-                        icon          = "🌐",
-                        modifier      = Modifier.weight(1f),
-                        keyboardType  = KeyboardType.Number
+                        label = "Latitude",
+                        icon = "🌐",
+                        modifier = Modifier.weight(1f),
+                        keyboardType = KeyboardType.Number
                     )
+
                     KundliTextField(
-                        value         = longitude,
+                        value = longitude,
                         onValueChange = { longitude = it },
-                        label         = "Longitude",
-                        icon          = "🌐",
-                        modifier      = Modifier.weight(1f),
-                        keyboardType  = KeyboardType.Number
+                        label = "Longitude",
+                        icon = "🌐",
+                        modifier = Modifier.weight(1f),
+                        keyboardType = KeyboardType.Number
                     )
                 }
 
-                // Error
                 state.error?.let {
-                    Text(it, color = MaterialTheme.colorScheme.error,
+                    Text(it,
+                        color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall)
                 }
 
-                // Generate button
                 Button(
                     onClick = {
-                        if (name.isNotBlank() && dob.isNotBlank() && tob.isNotBlank()
-                            && latitude.isNotBlank() && longitude.isNotBlank()
+
+                        if (name.isBlank() || dob.isBlank() || tob.isBlank()
+                            || latitude.isBlank() || longitude.isBlank()
                         ) {
-                            viewModel.generateKundli(
-                                KundliRequest(
-                                    name       = name,
-                                    gender     = gender,
-                                    dateOfBirth= dob,
-                                    timeOfBirth= tob,
-                                    latitude   = latitude.toDoubleOrNull() ?: 0.0,
-                                    longitude  = longitude.toDoubleOrNull() ?: 0.0,
-                                    timezone   = "Asia/Kolkata"
-                                )
-                            )
+                            Toast.makeText(
+                                context,
+                                "Please fill all required fields",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@Button
                         }
+
+                        viewModel.generateKundli(
+                            KundliRequest(
+                                name = name,
+                                gender = gender,
+                                dateOfBirth = dob,
+                                timeOfBirth = tob,
+                                latitude = latitude.toDoubleOrNull() ?: 0.0,
+                                longitude = longitude.toDoubleOrNull() ?: 0.0,
+                                timezone = "Asia/Kolkata"
+                            )
+                        )
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(54.dp),
-                    shape  = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MysticViolet),
                     enabled = !state.isLoading
                 ) {
+
                     if (state.isLoading) {
                         CircularProgressIndicator(
-                            color  = Color.White,
+                            color = Color.White,
                             modifier = Modifier.size(24.dp),
                             strokeWidth = 2.dp
                         )
@@ -218,6 +232,7 @@ fun GenerateKundliScreen(
                 }
             }
         }
+
         Spacer(Modifier.height(24.dp))
     }
 }
@@ -232,18 +247,18 @@ fun KundliTextField(
     keyboardType: KeyboardType = KeyboardType.Text
 ) {
     OutlinedTextField(
-        value         = value,
+        value = value,
         onValueChange = onValueChange,
-        label         = { Text(label, color = StarlightWhite.copy(alpha = 0.7f)) },
-        leadingIcon   = { Text(icon) },
-        modifier      = modifier,
-        shape         = RoundedCornerShape(12.dp),
+        label = { Text(label, color = StarlightWhite.copy(alpha = 0.7f)) },
+        leadingIcon = { Text(icon) },
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        colors        = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor   = MysticViolet,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = MysticViolet,
             unfocusedBorderColor = GlassBorder,
-            focusedTextColor     = StarlightWhite,
-            unfocusedTextColor   = StarlightWhite
+            focusedTextColor = StarlightWhite,
+            unfocusedTextColor = StarlightWhite
         )
     )
 }
