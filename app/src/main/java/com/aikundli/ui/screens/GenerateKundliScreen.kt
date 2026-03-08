@@ -35,15 +35,18 @@ fun GenerateKundliScreen(
     navController: NavController,
     viewModel: KundliViewModel = viewModel()
 ) {
+
     val context = LocalContext.current
     val state by viewModel.kundliState.collectAsState()
 
-    var name      by remember { mutableStateOf("") }
-    var gender    by remember { mutableStateOf("Male") }
-    var dob       by remember { mutableStateOf("") }
-    var tob       by remember { mutableStateOf("") }
-    var place     by remember { mutableStateOf("") }
-    var latitude  by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    var gender by remember { mutableStateOf("Male") }
+    var dob by remember { mutableStateOf("") }
+    var tob by remember { mutableStateOf("") }
+    var place by remember { mutableStateOf("") }
+
+    // kept for API but hidden from UI
+    var latitude by remember { mutableStateOf("") }
     var longitude by remember { mutableStateOf("") }
 
     val calendar = Calendar.getInstance()
@@ -84,9 +87,11 @@ fun GenerateKundliScreen(
                 .padding(top = 36.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             IconButton(onClick = { navController.popBackStack() }) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = GoldenStar)
+                Icon(Icons.Default.ArrowBack, "Back", tint = GoldenStar)
             }
+
             Text(
                 "Generate Kundli",
                 style = MaterialTheme.typography.headlineMedium,
@@ -96,6 +101,7 @@ fun GenerateKundliScreen(
         }
 
         GlassCard(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+
             Column(
                 modifier = Modifier.padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -105,16 +111,25 @@ fun GenerateKundliScreen(
                     style = MaterialTheme.typography.titleLarge,
                     color = GoldenStar)
 
-                KundliTextField(value = name, onValueChange = { name = it },
-                    label = "Full Name", icon = "👤")
+                KundliTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = "Full Name",
+                    icon = "👤"
+                )
 
                 Column {
-                    Text("Gender",
+
+                    Text(
+                        "Gender",
                         color = StarlightWhite.copy(alpha = 0.7f),
-                        style = MaterialTheme.typography.labelSmall)
+                        style = MaterialTheme.typography.labelSmall
+                    )
 
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+
                         listOf("Male", "Female", "Other").forEach { g ->
+
                             FilterChip(
                                 selected = gender == g,
                                 onClick = { gender = g },
@@ -134,11 +149,17 @@ fun GenerateKundliScreen(
                     shape = RoundedCornerShape(12.dp),
                     border = BorderStroke(1.dp, GlassBorder)
                 ) {
+
                     Icon(Icons.Default.CalendarMonth, null, tint = GoldenStar)
+
                     Spacer(Modifier.width(8.dp))
+
                     Text(
                         if (dob.isEmpty()) "Date of Birth" else dob,
-                        color = if (dob.isEmpty()) StarlightWhite.copy(0.5f) else StarlightWhite
+                        color = if (dob.isEmpty())
+                            StarlightWhite.copy(0.5f)
+                        else
+                            StarlightWhite
                     )
                 }
 
@@ -148,57 +169,53 @@ fun GenerateKundliScreen(
                     shape = RoundedCornerShape(12.dp),
                     border = BorderStroke(1.dp, GlassBorder)
                 ) {
+
                     Icon(Icons.Default.AccessTime, null, tint = GoldenStar)
+
                     Spacer(Modifier.width(8.dp))
+
                     Text(
                         if (tob.isEmpty()) "Time of Birth" else tob,
-                        color = if (tob.isEmpty()) StarlightWhite.copy(0.5f) else StarlightWhite
+                        color = if (tob.isEmpty())
+                            StarlightWhite.copy(0.5f)
+                        else
+                            StarlightWhite
                     )
                 }
 
-                KundliTextField(value = place, onValueChange = { place = it },
-                    label = "Place of Birth", icon = "📍")
-
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-
-                    KundliTextField(
-                        value = latitude,
-                        onValueChange = { latitude = it },
-                        label = "Latitude",
-                        icon = "🌐",
-                        modifier = Modifier.weight(1f),
-                        keyboardType = KeyboardType.Number
-                    )
-
-                    KundliTextField(
-                        value = longitude,
-                        onValueChange = { longitude = it },
-                        label = "Longitude",
-                        icon = "🌐",
-                        modifier = Modifier.weight(1f),
-                        keyboardType = KeyboardType.Number
-                    )
-                }
+                KundliTextField(
+                    value = place,
+                    onValueChange = { place = it },
+                    label = "Place of Birth",
+                    icon = "📍"
+                )
 
                 state.error?.let {
-                    Text(it,
+
+                    Text(
+                        it,
                         color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall)
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
 
                 Button(
                     onClick = {
 
-                        if (name.isBlank() || dob.isBlank() || tob.isBlank()
-                            || latitude.isBlank() || longitude.isBlank()
-                        ) {
+                        if (name.isBlank() || dob.isBlank() || tob.isBlank()) {
+
                             Toast.makeText(
                                 context,
                                 "Please fill all required fields",
                                 Toast.LENGTH_SHORT
                             ).show()
+
                             return@Button
                         }
+
+                        // fallback coordinates if place API not used
+                        val lat = 18.5204
+                        val lng = 73.8567
 
                         viewModel.generateKundli(
                             KundliRequest(
@@ -206,28 +223,38 @@ fun GenerateKundliScreen(
                                 gender = gender,
                                 dateOfBirth = dob,
                                 timeOfBirth = tob,
-                                latitude = latitude.toDoubleOrNull() ?: 0.0,
-                                longitude = longitude.toDoubleOrNull() ?: 0.0,
+                                latitude = lat,
+                                longitude = lng,
                                 timezone = "Asia/Kolkata"
                             )
                         )
                     },
+
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(54.dp),
+
                     shape = RoundedCornerShape(16.dp),
+
                     colors = ButtonDefaults.buttonColors(containerColor = MysticViolet),
+
                     enabled = !state.isLoading
                 ) {
 
                     if (state.isLoading) {
+
                         CircularProgressIndicator(
                             color = Color.White,
                             modifier = Modifier.size(24.dp),
                             strokeWidth = 2.dp
                         )
+
                     } else {
-                        Text("✨ Generate Kundli", fontWeight = FontWeight.Bold)
+
+                        Text(
+                            "✨ Generate Kundli",
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
@@ -246,6 +273,7 @@ fun KundliTextField(
     modifier: Modifier = Modifier.fillMaxWidth(),
     keyboardType: KeyboardType = KeyboardType.Text
 ) {
+
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
